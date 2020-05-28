@@ -51,7 +51,7 @@ class IgnorableChangeNotifier extends ChangeNotifier {
     super.notifyListeners();
     if (_ignorableListeners != null) {
       final List<VoidCallback> localListeners =
-          List<VoidCallback>.from(_ignorableListeners);
+      List<VoidCallback>.from(_ignorableListeners);
       for (VoidCallback listener in localListeners) {
         try {
           if (_ignorableListeners.contains(listener)) {

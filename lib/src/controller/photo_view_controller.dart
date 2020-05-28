@@ -92,12 +92,12 @@ class PhotoViewControllerValue {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PhotoViewControllerValue &&
-          runtimeType == other.runtimeType &&
-          position == other.position &&
-          scale == other.scale &&
-          rotation == other.rotation &&
-          rotationFocusPoint == other.rotationFocusPoint;
+          other is PhotoViewControllerValue &&
+              runtimeType == other.runtimeType &&
+              position == other.position &&
+              scale == other.scale &&
+              rotation == other.rotation &&
+              rotationFocusPoint == other.rotationFocusPoint;
 
   @override
   int get hashCode =>
@@ -125,13 +125,13 @@ class PhotoViewController
     Offset initialPosition = Offset.zero,
     double initialRotation = 0.0,
   })  : _valueNotifier = IgnorableValueNotifier(
-          PhotoViewControllerValue(
-            position: initialPosition,
-            rotation: initialRotation,
-            scale: null, // initial  scale is obtained via PhotoViewScaleState
-            rotationFocusPoint: null,
-          ),
-        ),
+    PhotoViewControllerValue(
+      position: initialPosition,
+      rotation: initialRotation,
+      scale: null, // initial  scale is obtained via PhotoViewScaleState
+      rotationFocusPoint: null,
+    ),
+  ),
         super() {
     initial = value;
     prevValue = initial;

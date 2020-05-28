@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view_example/screens/app_bar.dart';
 
@@ -44,10 +43,10 @@ class CustomChildExample extends StatelessWidget {
                               style: const TextStyle(fontSize: 12.0),
                               textAlign: TextAlign.center,
                             ),
-                            SvgPicture.asset(
-                              "assets/firefox.svg",
-                              height: 250.0,
-                            )
+//                            SvgPicture.asset(
+//                              "assets/firefox.svg",
+//                              height: 250.0,
+//                            )
                           ],
                         ),
                       ),

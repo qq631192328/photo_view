@@ -20,6 +20,8 @@ export 'src/core/photo_view_gesture_detector.dart'
 export 'src/photo_view_computed_scale.dart';
 export 'src/photo_view_scale_state.dart';
 export 'src/utils/photo_view_hero_attributes.dart';
+export 'video_view.dart';
+export 'src/painting/cache_network_image.dart';
 
 /// A [StatefulWidget] that contains all the photo view rendering elements.
 ///
@@ -255,10 +257,15 @@ class PhotoView extends StatefulWidget {
     this.scaleStateCycle,
     this.onTapUp,
     this.onTapDown,
+    this.onScaleUpdate,
+    this.onScaleStart,
+    this.onScaleEnd,
+    this.imageHolderUrl,
     this.customSize,
     this.gestureDetectorBehavior,
     this.tightMode,
     this.filterQuality,
+    this.loadResultCallback,
   })  : child = null,
         childSize = null,
         super(key: key);
@@ -286,10 +293,15 @@ class PhotoView extends StatefulWidget {
     this.scaleStateCycle,
     this.onTapUp,
     this.onTapDown,
+    this.onScaleUpdate,
+    this.onScaleStart,
+    this.onScaleEnd,
+    this.imageHolderUrl,
     this.customSize,
     this.gestureDetectorBehavior,
     this.tightMode,
     this.filterQuality,
+    this.loadResultCallback,
   })  : loadFailedChild = null,
         imageProvider = null,
         gaplessPlayback = false,
@@ -374,6 +386,14 @@ class PhotoView extends StatefulWidget {
   /// location.
   final PhotoViewImageTapDownCallback onTapDown;
 
+  final PhotoViewImageScaleStartCallback onScaleStart;
+
+  final PhotoViewImageScaleUpdateCallback onScaleUpdate;
+
+  final PhotoViewImageScaleEndCallback onScaleEnd;
+
+  final String imageHolderUrl;
+
   /// [HitTestBehavior] to be passed to the internal gesture detector.
   final HitTestBehavior gestureDetectorBehavior;
 
@@ -383,6 +403,8 @@ class PhotoView extends StatefulWidget {
 
   /// Quality levels for image filters.
   final FilterQuality filterQuality;
+
+  final Function(bool) loadResultCallback;
 
   @override
   State<StatefulWidget> createState() {
@@ -408,9 +430,9 @@ class _PhotoViewState extends State<PhotoView> {
       const ImageConfiguration(),
     );
     final listener = ImageStreamListener((
-      ImageInfo info,
-      bool synchronousCall,
-    ) {
+        ImageInfo info,
+        bool synchronousCall,
+        ) {
       if (!completer.isCompleted) {
         completer.complete(info);
         if (mounted) {
@@ -419,6 +441,7 @@ class _PhotoViewState extends State<PhotoView> {
               info.image.width.toDouble(),
               info.image.height.toDouble(),
             );
+            widget.loadResultCallback?.call(true);
             _loading = false;
             _imageChunkEvent = null;
           };
@@ -434,6 +457,7 @@ class _PhotoViewState extends State<PhotoView> {
         return;
       }
       setState(() {
+        widget.loadResultCallback?.call(false);
         _loadFailed = true;
       });
       FlutterError.reportError(
@@ -527,18 +551,19 @@ class _PhotoViewState extends State<PhotoView> {
     return _loadFailed == true
         ? _buildLoadFailed()
         : LayoutBuilder(
-            builder: (
-              BuildContext context,
-              BoxConstraints constraints,
-            ) {
-              return widget.child == null
-                  ? _buildImage(context, constraints)
-                  : _buildCustomChild(context, constraints);
-            },
-          );
+      builder: (
+          BuildContext context,
+          BoxConstraints constraints,
+          ) {
+        return widget.child == null
+            ? _buildImage(context, constraints)
+            : _buildCustomChild(context, constraints);
+      },
+    );
   }
 
   Widget _buildCustomChild(BuildContext context, BoxConstraints constraints) {
+//    widget.loadResultCallback(true);
     final _computedOuterSize = widget.customSize ?? constraints.biggest;
 
     final scaleBoundaries = ScaleBoundaries(
@@ -548,7 +573,7 @@ class _PhotoViewState extends State<PhotoView> {
       _computedOuterSize,
       _childSize ?? constraints.biggest,
     );
-
+//    print('scaleBoundaries :${scaleBoundaries.minScale}, ${scaleBoundaries.maxScale} , ${scaleBoundaries.initialScale}, ${scaleBoundaries.outerSize}, ${scaleBoundaries.childSize}');
     return PhotoViewCore.customChild(
       customChild: widget.child,
       backgroundDecoration: widget.backgroundDecoration,
@@ -561,6 +586,9 @@ class _PhotoViewState extends State<PhotoView> {
       scaleBoundaries: scaleBoundaries,
       onTapUp: widget.onTapUp,
       onTapDown: widget.onTapDown,
+      onScaleStart: widget.onScaleStart,
+      onScaleUpdate: widget.onScaleUpdate,
+      onScaleEnd: widget.onScaleEnd,
       gestureDetectorBehavior: widget.gestureDetectorBehavior,
       tightMode: widget.tightMode ?? false,
       filterQuality: widget.filterQuality ?? FilterQuality.none,
@@ -582,7 +610,8 @@ class _PhotoViewState extends State<PhotoView> {
           } else {
             return _buildLoading();
           }
-        });
+        }
+    );
   }
 
   Widget _buildSync(BuildContext context, BoxConstraints constraints) {
@@ -602,7 +631,7 @@ class _PhotoViewState extends State<PhotoView> {
       _computedOuterSize,
       _childSize,
     );
-
+//    print('scaleBoundaries :${scaleBoundaries.minScale}, ${scaleBoundaries.maxScale} , ${scaleBoundaries.initialScale}, ${scaleBoundaries.outerSize}, ${scaleBoundaries.childSize}');
     return PhotoViewCore(
       imageProvider: widget.imageProvider,
       backgroundDecoration: widget.backgroundDecoration,
@@ -616,6 +645,9 @@ class _PhotoViewState extends State<PhotoView> {
       scaleBoundaries: scaleBoundaries,
       onTapUp: widget.onTapUp,
       onTapDown: widget.onTapDown,
+      onScaleStart: widget.onScaleStart,
+      onScaleUpdate: widget.onScaleUpdate,
+      onScaleEnd: widget.onScaleEnd,
       gestureDetectorBehavior: widget.gestureDetectorBehavior,
       tightMode: widget.tightMode ?? false,
       filterQuality: widget.filterQuality ?? FilterQuality.none,
@@ -631,13 +663,21 @@ class _PhotoViewState extends State<PhotoView> {
       return widget.loadingChild;
     }
 
-    return PhotoViewDefaultLoading(
-      event: _imageChunkEvent,
+    return GestureDetector(
+      onTapUp: (details) => widget.onTapUp(context,details,null),
+      child: PhotoViewDefaultLoading(
+        event: _imageChunkEvent,
+        defaultUrl: widget.imageHolderUrl,
+      ),
     );
+
   }
 
   Widget _buildLoadFailed() {
-    return widget.loadFailedChild ?? PhotoViewDefaultError();
+    return GestureDetector(
+      onTapUp: (details) => widget.onTapUp(context,details,null),
+      child: widget.loadFailedChild ?? PhotoViewDefaultError(defaultUrl: widget.imageHolderUrl,),
+    );
   }
 }
 
@@ -662,25 +702,46 @@ PhotoViewScaleState defaultScaleStateCycle(PhotoViewScaleState actual) {
 /// It is used internally to walk in the "doubletap gesture cycle".
 /// It is passed to [PhotoView.scaleStateCycle]
 typedef ScaleStateCycle = PhotoViewScaleState Function(
-  PhotoViewScaleState actual,
-);
+    PhotoViewScaleState actual,
+    );
 
 /// A type definition for a callback when the user taps up the photoview region
 typedef PhotoViewImageTapUpCallback = Function(
-  BuildContext context,
-  TapUpDetails details,
-  PhotoViewControllerValue controllerValue,
-);
+    BuildContext context,
+    TapUpDetails details,
+    PhotoViewControllerValue controllerValue,
+    );
 
 /// A type definition for a callback when the user taps down the photoview region
 typedef PhotoViewImageTapDownCallback = Function(
-  BuildContext context,
-  TapDownDetails details,
-  PhotoViewControllerValue controllerValue,
-);
+    BuildContext context,
+    TapDownDetails details,
+    PhotoViewControllerValue controllerValue,
+    );
+
+typedef PhotoViewImageScaleUpdateCallback = Function(
+    BuildContext context,
+    ScaleUpdateDetails details,
+    Offset offset,
+    PhotoViewControllerValue controllerValue,
+    );
+
+typedef PhotoViewImageScaleStartCallback = Function(
+    BuildContext context,
+    ScaleStartDetails details,
+    Offset offset,
+    PhotoViewControllerValue controllerValue,
+    );
+
+typedef PhotoViewImageScaleEndCallback = Function(
+    BuildContext context,
+    ScaleEndDetails details,
+    Offset offset,
+    PhotoViewControllerValue controllerValue,
+    );
 
 /// A type definition for a callback to show a widget while a image is loading, a [ImageChunkEvent] is passed to inform progress
 typedef LoadingBuilder = Widget Function(
-  BuildContext context,
-  ImageChunkEvent event,
-);
+    BuildContext context,
+    ImageChunkEvent event,
+    );

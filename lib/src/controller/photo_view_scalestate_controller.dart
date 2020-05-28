@@ -58,7 +58,7 @@ class PhotoViewScaleStateController {
   /// Check if is `zoomedIn` & `zoomedOut`
   bool get isZooming =>
       scaleState == PhotoViewScaleState.zoomedIn ||
-      scaleState == PhotoViewScaleState.zoomedOut;
+          scaleState == PhotoViewScaleState.zoomedOut;
 
   /// Resets the state to the initial value;
   void reset() {

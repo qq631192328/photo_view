@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
 import 'photo_view_hit_corners.dart';
-
 class PhotoViewGestureDetector extends StatelessWidget {
   const PhotoViewGestureDetector({
     Key key,
@@ -38,39 +37,39 @@ class PhotoViewGestureDetector extends StatelessWidget {
     final Axis axis = scope?.axis;
 
     final Map<Type, GestureRecognizerFactory> gestures =
-        <Type, GestureRecognizerFactory>{};
+    <Type, GestureRecognizerFactory>{};
 
     if (onTapDown != null || onTapUp != null) {
       gestures[TapGestureRecognizer] =
           GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-        () => TapGestureRecognizer(debugOwner: this),
-        (TapGestureRecognizer instance) {
-          instance
-            ..onTapDown = onTapDown
-            ..onTapUp = onTapUp;
-        },
-      );
+                () => TapGestureRecognizer(debugOwner: this),
+                (TapGestureRecognizer instance) {
+              instance
+                ..onTapDown = onTapDown
+                ..onTapUp = onTapUp;
+            },
+          );
     }
 
     gestures[PhotoViewGestureRecognizer] =
         GestureRecognizerFactoryWithHandlers<PhotoViewGestureRecognizer>(
-      () => PhotoViewGestureRecognizer(
-          hitDetector: hitDetector, debugOwner: this, validateAxis: axis),
-      (PhotoViewGestureRecognizer instance) {
-        instance
-          ..onStart = onScaleStart
-          ..onUpdate = onScaleUpdate
-          ..onEnd = onScaleEnd;
-      },
-    );
+              () => PhotoViewGestureRecognizer(
+              hitDetector: hitDetector, debugOwner: this, validateAxis: axis),
+              (PhotoViewGestureRecognizer instance) {
+            instance
+              ..onStart = onScaleStart
+              ..onUpdate = onScaleUpdate
+              ..onEnd = onScaleEnd;
+          },
+        );
 
     gestures[DoubleTapGestureRecognizer] =
         GestureRecognizerFactoryWithHandlers<DoubleTapGestureRecognizer>(
-      () => DoubleTapGestureRecognizer(debugOwner: this),
-      (DoubleTapGestureRecognizer instance) {
-        instance..onDoubleTap = onDoubleTap;
-      },
-    );
+              () => DoubleTapGestureRecognizer(debugOwner: this),
+              (DoubleTapGestureRecognizer instance) {
+            instance..onDoubleTap = onDoubleTap;
+          },
+        );
 
     return RawGestureDetector(
       behavior: behavior ?? HitTestBehavior.translucent,
@@ -142,7 +141,7 @@ class PhotoViewGestureRecognizer extends ScaleGestureRecognizer {
     for (int pointer in _pointerLocations.keys)
       focalPoint += _pointerLocations[pointer];
     _currentFocalPoint =
-        count > 0 ? focalPoint / count.toDouble() : Offset.zero;
+    count > 0 ? focalPoint / count.toDouble() : Offset.zero;
   }
 
   void _decideIfWeAcceptEvent(PointerEvent event) {

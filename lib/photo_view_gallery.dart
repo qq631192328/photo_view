@@ -2,12 +2,7 @@ library photo_view_gallery;
 
 import 'package:flutter/widgets.dart';
 import 'package:photo_view/photo_view.dart'
-    show
-        LoadingBuilder,
-        PhotoView,
-        PhotoViewImageTapDownCallback,
-        PhotoViewImageTapUpCallback,
-        ScaleStateCycle;
+    show LoadingBuilder, PhotoView, PhotoViewImageScaleEndCallback, PhotoViewImageScaleStartCallback, PhotoViewImageScaleUpdateCallback, PhotoViewImageTapDownCallback, PhotoViewImageTapUpCallback, ScaleStateCycle;
 
 import 'package:photo_view/src/controller/photo_view_controller.dart';
 import 'package:photo_view/src/controller/photo_view_scalestate_controller.dart';
@@ -252,52 +247,62 @@ class _PhotoViewGalleryState extends State<PhotoViewGallery> {
 
     final PhotoView photoView = isCustomChild
         ? PhotoView.customChild(
-            key: ObjectKey(index),
-            child: pageOption.child,
-            childSize: pageOption.childSize,
-            backgroundDecoration: widget.backgroundDecoration,
-            controller: pageOption.controller,
-            scaleStateController: pageOption.scaleStateController,
-            customSize: widget.customSize,
-            heroAttributes: pageOption.heroAttributes,
-            scaleStateChangedCallback: scaleStateChangedCallback,
-            enableRotation: widget.enableRotation,
-            initialScale: pageOption.initialScale,
-            minScale: pageOption.minScale,
-            maxScale: pageOption.maxScale,
-            scaleStateCycle: pageOption.scaleStateCycle,
-            onTapUp: pageOption.onTapUp,
-            onTapDown: pageOption.onTapDown,
-            gestureDetectorBehavior: pageOption.gestureDetectorBehavior,
-            tightMode: pageOption.tightMode,
-            filterQuality: pageOption.filterQuality,
-            basePosition: pageOption.basePosition,
-          )
+      key: ObjectKey(index),
+      child: pageOption.child,
+      childSize: pageOption.childSize,
+      backgroundDecoration: pageOption.backgroundDecoration ?? widget.backgroundDecoration,
+      controller: pageOption.controller,
+      scaleStateController: pageOption.scaleStateController,
+      customSize: widget.customSize,
+      heroAttributes: pageOption.heroAttributes,
+      scaleStateChangedCallback: scaleStateChangedCallback,
+      enableRotation: widget.enableRotation,
+      initialScale: pageOption.initialScale,
+      minScale: pageOption.minScale,
+      maxScale: pageOption.maxScale,
+      scaleStateCycle: pageOption.scaleStateCycle,
+      onTapUp: pageOption.onTapUp,
+      onTapDown: pageOption.onTapDown,
+      onScaleStart: pageOption.onScaleStart,
+      onScaleUpdate: pageOption.onScaleUpdate,
+      onScaleEnd: pageOption.onScaleEnd,
+      gestureDetectorBehavior: pageOption.gestureDetectorBehavior,
+      tightMode: pageOption.tightMode,
+      filterQuality: pageOption.filterQuality,
+      basePosition: pageOption.basePosition,
+      imageHolderUrl: pageOption.imageHolderUrl,
+      loadResultCallback: pageOption.loadResultCallback,
+    )
         : PhotoView(
-            key: ObjectKey(index),
-            imageProvider: pageOption.imageProvider,
-            loadingBuilder: widget.loadingBuilder,
-            loadingChild: widget.loadingChild,
-            loadFailedChild: widget.loadFailedChild,
-            backgroundDecoration: widget.backgroundDecoration,
-            controller: pageOption.controller,
-            scaleStateController: pageOption.scaleStateController,
-            customSize: widget.customSize,
-            gaplessPlayback: widget.gaplessPlayback,
-            heroAttributes: pageOption.heroAttributes,
-            scaleStateChangedCallback: scaleStateChangedCallback,
-            enableRotation: widget.enableRotation,
-            initialScale: pageOption.initialScale,
-            minScale: pageOption.minScale,
-            maxScale: pageOption.maxScale,
-            scaleStateCycle: pageOption.scaleStateCycle,
-            onTapUp: pageOption.onTapUp,
-            onTapDown: pageOption.onTapDown,
-            gestureDetectorBehavior: pageOption.gestureDetectorBehavior,
-            tightMode: pageOption.tightMode,
-            filterQuality: pageOption.filterQuality,
-            basePosition: pageOption.basePosition,
-          );
+      key: ObjectKey(index),
+      imageProvider: pageOption.imageProvider,
+      loadingBuilder: widget.loadingBuilder,
+      loadingChild: widget.loadingChild,
+      loadFailedChild: widget.loadFailedChild,
+      backgroundDecoration: pageOption.backgroundDecoration ?? widget.backgroundDecoration,
+      controller: pageOption.controller,
+      scaleStateController: pageOption.scaleStateController,
+      customSize: widget.customSize,
+      gaplessPlayback: widget.gaplessPlayback,
+      heroAttributes: pageOption.heroAttributes,
+      scaleStateChangedCallback: scaleStateChangedCallback,
+      enableRotation: widget.enableRotation,
+      initialScale: pageOption.initialScale,
+      minScale: pageOption.minScale,
+      maxScale: pageOption.maxScale,
+      scaleStateCycle: pageOption.scaleStateCycle,
+      onTapUp: pageOption.onTapUp,
+      onTapDown: pageOption.onTapDown,
+      onScaleStart: pageOption.onScaleStart,
+      onScaleUpdate: pageOption.onScaleUpdate,
+      onScaleEnd: pageOption.onScaleEnd,
+      gestureDetectorBehavior: pageOption.gestureDetectorBehavior,
+      tightMode: pageOption.tightMode,
+      filterQuality: pageOption.filterQuality,
+      basePosition: pageOption.basePosition,
+      imageHolderUrl: pageOption.imageHolderUrl,
+      loadResultCallback: pageOption.loadResultCallback,
+    );
 
     return ClipRect(
       child: photoView,
@@ -321,6 +326,7 @@ class PhotoViewGalleryPageOptions {
   PhotoViewGalleryPageOptions({
     Key key,
     @required this.imageProvider,
+    this.backgroundDecoration,
     this.heroAttributes,
     this.minScale,
     this.maxScale,
@@ -331,15 +337,21 @@ class PhotoViewGalleryPageOptions {
     this.scaleStateCycle,
     this.onTapUp,
     this.onTapDown,
+    this.onScaleUpdate,
+    this.onScaleStart,
+    this.onScaleEnd,
+    this.imageHolderUrl,
     this.gestureDetectorBehavior,
     this.tightMode,
     this.filterQuality,
+    this.loadResultCallback
   })  : child = null,
         childSize = null,
         assert(imageProvider != null);
 
   PhotoViewGalleryPageOptions.customChild({
     @required this.child,
+    this.backgroundDecoration,
     this.childSize,
     this.heroAttributes,
     this.minScale,
@@ -351,14 +363,21 @@ class PhotoViewGalleryPageOptions {
     this.scaleStateCycle,
     this.onTapUp,
     this.onTapDown,
+    this.onScaleUpdate,
+    this.onScaleStart,
+    this.onScaleEnd,
+    this.imageHolderUrl,
     this.gestureDetectorBehavior,
     this.tightMode,
     this.filterQuality,
+    this.loadResultCallback
   })  : imageProvider = null,
         assert(child != null);
 
   /// Mirror to [PhotoView.imageProvider]
   final ImageProvider imageProvider;
+
+  final BoxDecoration backgroundDecoration;
 
   /// Mirror to [PhotoView.heroAttributes]
   final PhotoViewHeroAttributes heroAttributes;
@@ -396,6 +415,12 @@ class PhotoViewGalleryPageOptions {
   /// Mirror to [PhotoView.onTapDown]
   final PhotoViewImageTapDownCallback onTapDown;
 
+  final PhotoViewImageScaleStartCallback onScaleStart;
+  final PhotoViewImageScaleUpdateCallback onScaleUpdate;
+  final PhotoViewImageScaleEndCallback onScaleEnd;
+
+  final String imageHolderUrl;
+
   /// Mirror to [PhotoView.gestureDetectorBehavior]
   final HitTestBehavior gestureDetectorBehavior;
 
@@ -404,4 +429,7 @@ class PhotoViewGalleryPageOptions {
 
   /// Quality levels for image filters.
   final FilterQuality filterQuality;
+
+  /// 加载结果
+  final Function(bool) loadResultCallback;
 }

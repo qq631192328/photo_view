@@ -2,7 +2,7 @@ name: photo_view_example
 description: Example of how to use Photo View
 
 dependencies:
-  flutter_svg:
+#  flutter_svg:
   photo_view:
     path: ../
   flutter:

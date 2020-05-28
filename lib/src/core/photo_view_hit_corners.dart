@@ -9,10 +9,10 @@ mixin HitCornersDetector on PhotoViewControllerDelegate {
   HitCorners hitCornersX() {
     final double childWidth = scaleBoundaries.childSize.width * scale;
     final double screenWidth = scaleBoundaries.outerSize.width;
-    if (screenWidth >= childWidth) {
+    if (screenWidth.floor() >= childWidth.floor()) {
       return const HitCorners(true, true);
     }
-    final x = -position.dx;
+    double x = -position.dx;
     final cornersX = this.cornersX();
     return HitCorners(x <= cornersX.min, x >= cornersX.max);
   }
@@ -20,7 +20,7 @@ mixin HitCornersDetector on PhotoViewControllerDelegate {
   HitCorners hitCornersY() {
     final double childHeight = scaleBoundaries.childSize.height * scale;
     final double screenHeight = scaleBoundaries.outerSize.height;
-    if (screenHeight >= childHeight) {
+    if (screenHeight.floor() >= childHeight.floor()) {
       return const HitCorners(true, true);
     }
     final y = -position.dy;
@@ -30,7 +30,6 @@ mixin HitCornersDetector on PhotoViewControllerDelegate {
 
   bool shouldMoveX(Offset move) {
     final hitCornersX = this.hitCornersX();
-
     if (hitCornersX.hasHitAny && move != Offset.zero) {
       if (hitCornersX.hasHitBoth) {
         return false;
