@@ -124,7 +124,10 @@ class _VideoViewState extends State<VideoView> {
                 valueListenable: _videoPlayerController,
                 builder: (context,VideoPlayerValue value,_) {
                   return value.isPlaying ? Container() : GestureDetector(
-                    onTap: () => _videoPlayerController.play(),
+                    onTap: () async{
+                      await _videoPlayerController.initialize();
+                      _videoPlayerController.play();
+                    },
                     child: Center(
                       child: Icon(
                         Icons.play_circle_outline,
