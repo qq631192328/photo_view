@@ -423,7 +423,7 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> with 
         onTapUp: (context,_,value) {
           Navigator.of(context).pop();
         },
-        imageHolderUrl: item.holderUrl,
+//        holderWiget: ,
         minScale: PhotoViewComputedScale.contained * 0.8,
         maxScale: PhotoViewComputedScale.covered * 1.4,
         heroAttributes: PhotoViewHeroAttributes(tag: item.id),

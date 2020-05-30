@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class PhotoViewDefaultError extends StatelessWidget {
 
-  PhotoViewDefaultError({Key key, this.defaultUrl}) : super(key: key);
-  final String defaultUrl;
+  PhotoViewDefaultError({Key key, this.holderWiget}) : super(key: key);
+  final Widget holderWiget;
 
   @override
   Widget build(BuildContext context) {
@@ -12,26 +12,23 @@ class PhotoViewDefaultError extends StatelessWidget {
       height: MediaQuery.of(context).size.height,
       color: Color(0x00000000),
       child: Center(
-//        child:
-//        defaultUrl == null ?
-//        Icon(
-//          Icons.broken_image,
-//          color: Colors.grey[400],
-//          size: 40.0,
-//        ) :
-//        NetworkImageWithPlaceholder(
-//          defaultUrl,
-//        ),
+        child:
+        holderWiget == null ?
+        Icon(
+          Icons.broken_image,
+          color: Colors.grey[400],
+          size: 40.0,
+        ) : holderWiget,
       ),
     );
   }
 }
 
 class PhotoViewDefaultLoading extends StatelessWidget {
-  const PhotoViewDefaultLoading({Key key, this.event, this.defaultUrl}) : super(key: key);
+  const PhotoViewDefaultLoading({Key key, this.event, this.holderWiget}) : super(key: key);
 
   final ImageChunkEvent event;
-  final String defaultUrl;
+  final Widget holderWiget;
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +40,8 @@ class PhotoViewDefaultLoading extends StatelessWidget {
         height: MediaQuery.of(context).size.height,
         color: Color(0x00000000),
         child: Stack(children: <Widget>[
-          defaultUrl == null ? Container() : Center(
-//            child: NetworkImageWithPlaceholder(
-//              defaultUrl,
-//            ),
+          holderWiget == null ? Container() : Center(
+            child: holderWiget,
           ),
           Center(
             child: Container(

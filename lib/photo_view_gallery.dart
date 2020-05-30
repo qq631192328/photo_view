@@ -270,7 +270,7 @@ class _PhotoViewGalleryState extends State<PhotoViewGallery> {
       tightMode: pageOption.tightMode,
       filterQuality: pageOption.filterQuality,
       basePosition: pageOption.basePosition,
-      imageHolderUrl: pageOption.imageHolderUrl,
+      holderWiget: pageOption.holderWiget,
       loadResultCallback: pageOption.loadResultCallback,
     )
         : PhotoView(
@@ -300,7 +300,7 @@ class _PhotoViewGalleryState extends State<PhotoViewGallery> {
       tightMode: pageOption.tightMode,
       filterQuality: pageOption.filterQuality,
       basePosition: pageOption.basePosition,
-      imageHolderUrl: pageOption.imageHolderUrl,
+      holderWiget: pageOption.holderWiget,
       loadResultCallback: pageOption.loadResultCallback,
     );
 
@@ -340,7 +340,7 @@ class PhotoViewGalleryPageOptions {
     this.onScaleUpdate,
     this.onScaleStart,
     this.onScaleEnd,
-    this.imageHolderUrl,
+    this.holderWiget,
     this.gestureDetectorBehavior,
     this.tightMode,
     this.filterQuality,
@@ -366,7 +366,7 @@ class PhotoViewGalleryPageOptions {
     this.onScaleUpdate,
     this.onScaleStart,
     this.onScaleEnd,
-    this.imageHolderUrl,
+    this.holderWiget,
     this.gestureDetectorBehavior,
     this.tightMode,
     this.filterQuality,
@@ -419,7 +419,8 @@ class PhotoViewGalleryPageOptions {
   final PhotoViewImageScaleUpdateCallback onScaleUpdate;
   final PhotoViewImageScaleEndCallback onScaleEnd;
 
-  final String imageHolderUrl;
+//  final String imageHolderUrl;
+  final Widget holderWiget;
 
   /// Mirror to [PhotoView.gestureDetectorBehavior]
   final HitTestBehavior gestureDetectorBehavior;

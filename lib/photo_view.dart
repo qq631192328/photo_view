@@ -260,7 +260,7 @@ class PhotoView extends StatefulWidget {
     this.onScaleUpdate,
     this.onScaleStart,
     this.onScaleEnd,
-    this.imageHolderUrl,
+    this.holderWiget,
     this.customSize,
     this.gestureDetectorBehavior,
     this.tightMode,
@@ -296,7 +296,7 @@ class PhotoView extends StatefulWidget {
     this.onScaleUpdate,
     this.onScaleStart,
     this.onScaleEnd,
-    this.imageHolderUrl,
+    this.holderWiget,
     this.customSize,
     this.gestureDetectorBehavior,
     this.tightMode,
@@ -392,7 +392,8 @@ class PhotoView extends StatefulWidget {
 
   final PhotoViewImageScaleEndCallback onScaleEnd;
 
-  final String imageHolderUrl;
+//  final String imageHolderUrl;
+  final Widget holderWiget;
 
   /// [HitTestBehavior] to be passed to the internal gesture detector.
   final HitTestBehavior gestureDetectorBehavior;
@@ -667,7 +668,7 @@ class _PhotoViewState extends State<PhotoView> {
       onTapUp: (details) => widget.onTapUp(context,details,null),
       child: PhotoViewDefaultLoading(
         event: _imageChunkEvent,
-        defaultUrl: widget.imageHolderUrl,
+        holderWiget: widget.holderWiget,
       ),
     );
 
@@ -676,7 +677,7 @@ class _PhotoViewState extends State<PhotoView> {
   Widget _buildLoadFailed() {
     return GestureDetector(
       onTapUp: (details) => widget.onTapUp(context,details,null),
-      child: widget.loadFailedChild ?? PhotoViewDefaultError(defaultUrl: widget.imageHolderUrl,),
+      child: widget.loadFailedChild ?? PhotoViewDefaultError(holderWiget: widget.holderWiget,),
     );
   }
 }
