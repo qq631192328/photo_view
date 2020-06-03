@@ -193,11 +193,12 @@ class PhotoViewCoreState extends State<PhotoViewCore>
     final double magnitude = details.velocity.pixelsPerSecond.distance;
 
     // animate velocity only if there is no scale change and a significant magnitude
+    print(magnitude);
     if (_scaleBefore / _scale == 1.0 && magnitude >= 400.0) {
       final Offset direction = details.velocity.pixelsPerSecond / magnitude;
       animatePosition(
         _position,
-        clampPosition(position: _position + direction * 100.0),
+        clampPosition(position: _position + direction * magnitude / 8 ),
       );
     }
   }
@@ -221,7 +222,8 @@ class PhotoViewCoreState extends State<PhotoViewCore>
         .animate(_positionAnimationController);
     _positionAnimationController
       ..value = 0.0
-      ..fling(velocity: 0.4);
+      ..fling(velocity: 0.4)
+    ;
   }
 
   void animateRotation(double from, double to) {
@@ -262,6 +264,10 @@ class PhotoViewCoreState extends State<PhotoViewCore>
     addAnimateOnScaleStateUpdate(animateOnScaleStateUpdate);
 
     cachedScaleBoundaries = widget.scaleBoundaries;
+
+
+
+    setState(() {});
   }
 
   void animateOnScaleStateUpdate(double prevScale, double nextScale) {
@@ -305,7 +311,6 @@ class PhotoViewCoreState extends State<PhotoViewCore>
           if (snapshot.hasData) {
             final PhotoViewControllerValue value = snapshot.data;
             final useImageScale = widget.filterQuality != FilterQuality.none;
-
             final computedScale = useImageScale ? 1.0 : scale;
 
             final matrix = Matrix4.identity()
@@ -314,6 +319,8 @@ class PhotoViewCoreState extends State<PhotoViewCore>
             if (widget.enableRotation) {
               matrix..rotateZ(value.rotation);
             }
+//            print('position: ${value.position.dy} ,'
+//                'child: ${ (scaleBoundaries.childSize.height * computedScale - scaleBoundaries.outerSize.height ) / 2}');
 
             final Widget customChildLayout = CustomSingleChildLayout(
               delegate: _CenterWithOriginalSizeDelegate(

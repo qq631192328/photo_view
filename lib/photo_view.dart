@@ -624,22 +624,37 @@ class _PhotoViewState extends State<PhotoView> {
 
   Widget _buildWrapperImage(BuildContext context, BoxConstraints constraints) {
     final _computedOuterSize = widget.customSize ?? constraints.biggest;
+    var minScale = widget.minScale ?? 0.0;
+    var maxScale = widget.maxScale ?? double.infinity;
+    /// 长度全屏逻辑判断
+    var initialScale = widget.initialScale;
+    var isVerticalLongPhoto = _childSize.height/_childSize.width > _computedOuterSize.height/_computedOuterSize.width;
+    if (isVerticalLongPhoto) {
+      initialScale = PhotoViewComputedScale.covered;
+      maxScale = PhotoViewComputedScale.covered;
+      minScale = PhotoViewComputedScale.covered;
+    }
 
     final scaleBoundaries = ScaleBoundaries(
-      widget.minScale ?? 0.0,
-      widget.maxScale ?? double.infinity,
-      widget.initialScale ?? PhotoViewComputedScale.contained,
+      minScale,
+      maxScale,
+      initialScale ?? PhotoViewComputedScale.contained,
       _computedOuterSize,
       _childSize,
     );
-//    print('scaleBoundaries :${scaleBoundaries.minScale}, ${scaleBoundaries.maxScale} , ${scaleBoundaries.initialScale}, ${scaleBoundaries.outerSize}, ${scaleBoundaries.childSize}');
+
+//    print('scaleBoundaries :${scaleBoundaries.minScale},'
+//        ' ${scaleBoundaries.maxScale} ,'
+//        ' ${scaleBoundaries.initialScale},'
+//        ' ${scaleBoundaries.outerSize},'
+//        ' ${scaleBoundaries.childSize}');
     return PhotoViewCore(
       imageProvider: widget.imageProvider,
       backgroundDecoration: widget.backgroundDecoration,
       gaplessPlayback: widget.gaplessPlayback,
       enableRotation: widget.enableRotation,
       heroAttributes: widget.heroAttributes,
-      basePosition: widget.basePosition ?? Alignment.center,
+      basePosition: widget.basePosition ?? (isVerticalLongPhoto ? Alignment.topLeft : Alignment.center),
       controller: _controller,
       scaleStateController: _scaleStateController,
       scaleStateCycle: widget.scaleStateCycle ?? defaultScaleStateCycle,
